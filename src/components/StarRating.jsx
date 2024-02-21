@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import PropTypes from "prop-types"
 
 const containerStyle = {
@@ -37,6 +37,11 @@ export default function StarRating({
         fontSize: `${size / 1.5}px`,
     }
 
+    useEffect(() => {
+        onSetRating(rating)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rating])
+
     return (
         <div style={containerStyle} className={className}>
             <div style={starContainerStyle}>
@@ -45,7 +50,6 @@ export default function StarRating({
                         key={i}
                         onRate={() => {
                             setRating(i + 1)
-                            onSetRating(rating)
                         }}
                         full={
                             tempRating ? tempRating >= i + 1 : rating >= i + 1
