@@ -10,14 +10,13 @@ import Main from "./components/Main.jsx"
 import Box from "./components/Box.jsx"
 import Movielist from "./components/MovieList.jsx"
 import SelectedMovie from "./components/SelectedMovie.jsx"
-
-const average = (arr) =>
-    arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0)
+import WatchedMoviesList from "./components/WatchedMoviesList.jsx"
+import WatchedSummary from "./components/WatchedSummary.jsx"
 
 const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY
 
 export default function App() {
-    const [query, setQuery] = useState("Inception")
+    const [query, setQuery] = useState("")
     const [movies, setMovies] = useState([])
     const [watched, setWatched] = useState([])
     const [isLoading, setIsLoading] = useState(false)
@@ -25,12 +24,14 @@ export default function App() {
     const [error, setError] = useState(null)
 
     useEffect(() => {
+        const controller = new AbortController() //Browser API
         async function fetchMovies() {
             try {
                 setIsLoading(true)
                 setError(null)
                 const res = await fetch(
                     `https://www.omdbapi.com/?s=${query}&apikey=${REACT_APP_API_KEY}`,
+                    { signal: controller.signal },
                 )
                 if (!res.ok) {
                     throw new Error(
@@ -42,8 +43,11 @@ export default function App() {
                     throw new Error("Movie not found")
                 }
                 setMovies(data.Search)
+                setError(null)
             } catch (err) {
-                setError(err.message)
+                if (err.name !== "AbortError") {
+                    setError(err.message)
+                }
             } finally {
                 setIsLoading(false)
             }
@@ -55,6 +59,10 @@ export default function App() {
         }
 
         fetchMovies()
+
+        return () => {
+            controller.abort()
+        }
     }, [query])
 
     function handleSelectedId(id) {
@@ -67,6 +75,10 @@ export default function App() {
 
     function handleAddWatched(movie) {
         setWatched((watched) => [...watched, movie])
+    }
+
+    function handleDeleteWatched(id) {
+        setWatched((watched) => watched.filter((movie) => movie.imdbID !== id))
     }
 
     return (
@@ -98,73 +110,14 @@ export default function App() {
                     ) : (
                         <>
                             <WatchedSummary watched={watched} />
-                            <WatchedMoviesList watched={watched} />
+                            <WatchedMoviesList
+                                watched={watched}
+                                onDeleteWatched={handleDeleteWatched}
+                            />
                         </>
                     )}
                 </Box>
             </Main>
         </>
-    )
-}
-
-function WatchedMoviesList({ watched }) {
-    return (
-        <ul className="list">
-            {watched.map((movie) => (
-                <WatchedMovie key={movie.imdbID} movie={movie} />
-            ))}
-        </ul>
-    )
-}
-
-function WatchedMovie({ key, movie }) {
-    return (
-        <li key={movie.imdbID}>
-            <img src={movie.poster} alt={`${movie.title} poster`} />
-            <h3>{movie.title}</h3>
-            <div>
-                <p>
-                    <span>⭐️</span>
-                    <span>{movie.imdbRating}</span>
-                </p>
-                <p>
-                    <span>🌟</span>
-                    <span>{movie.userRating}</span>
-                </p>
-                <p>
-                    <span>⏳</span>
-                    <span>{movie.runtime} min</span>
-                </p>
-            </div>
-        </li>
-    )
-}
-
-function WatchedSummary({ watched }) {
-    const avgImdbRating = average(watched.map((movie) => movie.imdbRating))
-    const avgUserRating = average(watched.map((movie) => movie.userRating))
-    const avgRuntime = average(watched.map((movie) => movie.runtime))
-    return (
-        <div className="summary">
-            <h2>Movies you watched</h2>
-            <div>
-                <p>
-                    <span>#️⃣</span>
-                    <span>{watched.length} movies</span>
-                </p>
-                <p>
-                    <span>⭐️</span>
-                    <span>{avgImdbRating}</span>
-                </p>
-                <p>
-                    <span>🌟</span>
-                    <span>{avgUserRating}</span>
-                </p>
-                <p>
-                    <span>⏳</span>
-                    <span>{avgRuntime} min</span>
-                </p>
-            </div>
-        </div>
     )
 }

@@ -16,7 +16,7 @@ export default function SelectedMovie({
 
     const isWatched = watched.some((movie) => movie.imdbID === selectedId)
     const watchedUserRating = watched.find(
-        (movie) => movie.imdbId === selectedId,
+        (movie) => movie.imdbID === selectedId,
     )?.userRating
 
     const {
@@ -44,6 +44,15 @@ export default function SelectedMovie({
         }
         fetchMovieDetails()
     }, [selectedId])
+
+    useEffect(() => {
+        if (!title) return
+        document.title = title
+
+        return () => {
+            document.title = "Cinema Cut"
+        }
+    }, [title])
 
     function handleAdd() {
         const newWatchedMovie = {
@@ -106,8 +115,8 @@ export default function SelectedMovie({
                                 </>
                             ) : (
                                 <p>
-                                    You have rated this movie
-                                    {watchedUserRating}
+                                    You have rated this movie{" "}
+                                    {watchedUserRating}⭐
                                 </p>
                             )}
                         </div>
