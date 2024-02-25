@@ -390,11 +390,6 @@ body {
     grid-column: 2;
   }
 
-  .main {
-    flex-direction: column;
-    padding-right: 0px;
-  }
-
   .box {
     width: 100%;
     max-width: 200%;
