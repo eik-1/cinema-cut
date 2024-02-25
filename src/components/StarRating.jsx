@@ -29,6 +29,21 @@ export default function StarRating({
 }) {
     const [rating, setRating] = useState(0)
     const [tempRating, setTempRating] = useState(0)
+    const [starSize, setStarSize] = useState(
+        window.innerWidth < 900 ? size / 1.3 : size,
+    )
+
+    useEffect(() => {
+        const handleResize = () => {
+            setStarSize(window.innerWidth < 900 ? size / 1.3 : size)
+        }
+
+        window.addEventListener("resize", handleResize)
+
+        return () => {
+            window.removeEventListener("resize", handleResize)
+        }
+    }, [size])
 
     const textStyle = {
         lineHeight: "1",
@@ -57,7 +72,7 @@ export default function StarRating({
                         onHoverIn={() => setTempRating(i + 1)}
                         onHoverOut={() => setTempRating(rating)}
                         color={color}
-                        size={size}
+                        size={starSize}
                     />
                 ))}
             </div>

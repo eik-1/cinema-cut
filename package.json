@@ -15,6 +15,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "build": "react-scripts build",
     "build:staging": "react-scripts --env=staging build",
     "build:production": "react-scripts --env=production build",
     "test": "react-scripts test",
