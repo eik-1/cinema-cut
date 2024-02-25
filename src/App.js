@@ -90,7 +90,7 @@ export default function App() {
                 <Numresults movies={movies} />
             </Navbar>
             <Main>
-                <Box>
+                <Box id="movie-list">
                     {isLoading && <Loader />}
                     {!isLoading && !error && (
                         <Movielist
@@ -100,7 +100,7 @@ export default function App() {
                     )}
                     {error && <ErrorMessage message={error} />}
                 </Box>
-                <Box>
+                <Box id="watched">
                     {selectedId ? (
                         <SelectedMovie
                             selectedId={selectedId}

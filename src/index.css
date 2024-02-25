@@ -390,15 +390,10 @@ body {
     grid-column: 2;
   }
 
-  .main {
-    flex-direction: column;
-    gap: 2.4rem;
-    padding-right: 0px;
-  }
-
   .box {
     width: 100%;
     max-width: 200%;
+    height:20dvh;
   }
 
   .list {
@@ -468,5 +463,17 @@ body {
   .rating button {
     font-size: 2rem;
     padding: 1.2rem;
+  }
+  .main
+  {
+    display:flex;
+    flex-flow:column;
+    height:80dvh;
+    width:100%;
+    justify-content: flex-start;
+  }
+  .box#watched{
+    height:80%;
+    width:100%;
   }
 }
