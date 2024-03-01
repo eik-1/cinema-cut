@@ -18,10 +18,15 @@ const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY
 export default function App() {
     const [query, setQuery] = useState("")
     const [movies, setMovies] = useState([])
-    const [watched, setWatched] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [selectedId, setSelectedId] = useState(null)
     const [error, setError] = useState(null)
+
+    //const [watched, setWatched] = useState([])
+    const [watched, setWatched] = useState(function () {
+        const storedWatched = localStorage.getItem("watched")
+        return JSON.parse(storedWatched) || []
+    })
 
     useEffect(() => {
         const controller = new AbortController() //Browser API
@@ -66,6 +71,10 @@ export default function App() {
         }
     }, [query])
 
+    useEffect(() => {
+        localStorage.setItem("watched", JSON.stringify(watched))
+    }, [watched])
+
     function handleSelectedId(id) {
         setSelectedId((selectedId) => (selectedId === id ? null : id))
     }
@@ -76,6 +85,7 @@ export default function App() {
 
     function handleAddWatched(movie) {
         setWatched((watched) => [...watched, movie])
+        //localStorage.setItem("watched", JSON.stringify([...watched, movie]))
     }
 
     function handleDeleteWatched(id) {
