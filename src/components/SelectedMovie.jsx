@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import Loader from "./Loader"
 import StarRating from "./StarRating"
 
@@ -31,6 +31,14 @@ export default function SelectedMovie({
         Director: director,
         Genre: genre,
     } = movie
+
+    const countRef = useRef(0)
+
+    useEffect(() => {
+        if (userRating) {
+            countRef.current++
+        }
+    }, [userRating])
 
     useEffect(() => {
         async function fetchMovieDetails() {
@@ -75,6 +83,7 @@ export default function SelectedMovie({
             imdbRating: Number(imdbRating),
             runtime: Number(runtime.split(" ").at(0)),
             userRating,
+            countRating: countRef.current,
         }
 
         onAddWatched(newWatchedMovie)
