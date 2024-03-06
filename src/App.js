@@ -12,64 +12,18 @@ import Movielist from "./components/MovieList.jsx"
 import SelectedMovie from "./components/SelectedMovie.jsx"
 import WatchedMoviesList from "./components/WatchedMoviesList.jsx"
 import WatchedSummary from "./components/WatchedSummary.jsx"
-
-const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY
+import { useMovies } from "./useMovies.js"
 
 export default function App() {
     const [query, setQuery] = useState("")
-    const [movies, setMovies] = useState([])
-    const [isLoading, setIsLoading] = useState(false)
     const [selectedId, setSelectedId] = useState(null)
-    const [error, setError] = useState(null)
+    const { movies, isLoading, error } = useMovies(query, handleCloseMovie) //custom hook
 
     //const [watched, setWatched] = useState([])
     const [watched, setWatched] = useState(function () {
         const storedWatched = localStorage.getItem("watched")
         return JSON.parse(storedWatched) || []
     })
-
-    useEffect(() => {
-        const controller = new AbortController() //Browser API
-        async function fetchMovies() {
-            try {
-                setIsLoading(true)
-                setError(null)
-                const res = await fetch(
-                    `https://www.omdbapi.com/?s=${query}&apikey=${REACT_APP_API_KEY}`,
-                    { signal: controller.signal },
-                )
-                if (!res.ok) {
-                    throw new Error(
-                        "Something went wrong while fetching movies",
-                    )
-                }
-                const data = await res.json()
-                if (data.Response === "False") {
-                    throw new Error("Movie not found")
-                }
-                setMovies(data.Search)
-                setError(null)
-            } catch (err) {
-                if (err.name !== "AbortError") {
-                    setError(err.message)
-                }
-            } finally {
-                setIsLoading(false)
-            }
-        }
-        if (query.length < 3) {
-            setMovies([])
-            setError("")
-            return
-        }
-
-        handleCloseMovie()
-        fetchMovies()
-
-        return () => {
-            controller.abort()
-        }
-    }, [query])
 
     useEffect(() => {
         localStorage.setItem("watched", JSON.stringify(watched))
