@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useKey } from "../useKey"
 import Loader from "./Loader"
 import StarRating from "./StarRating"
 
@@ -40,6 +41,8 @@ export default function SelectedMovie({
         }
     }, [userRating])
 
+    useKey("Escape", onCloseMovie)
+
     useEffect(() => {
         async function fetchMovieDetails() {
             setIsLoading(true)
@@ -61,18 +64,6 @@ export default function SelectedMovie({
             document.title = "Cinema Cut"
         }
     }, [title])
-
-    useEffect(() => {
-        function callback(e) {
-            if (e.code === "Escape") onCloseMovie()
-        }
-
-        document.addEventListener("keydown", callback)
-
-        return () => {
-            document.removeEventListener("keydown", callback)
-        }
-    }, [onCloseMovie])
 
     function handleAdd() {
         const newWatchedMovie = {

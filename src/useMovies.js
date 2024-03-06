@@ -2,13 +2,13 @@ import { useEffect, useState } from "react"
 
 const REACT_APP_API_KEY = process.env.REACT_APP_API_KEY
 
-export function useMovies(query, callback) {
+export function useMovies(query) {
     const [movies, setMovies] = useState([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState(null)
 
     useEffect(() => {
-        callback?.() //Calling the callback function if it exists
+        //callback?.()    Calling the callback function if it exists
         const controller = new AbortController() //Browser API
         async function fetchMovies() {
             try {
